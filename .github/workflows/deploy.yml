@@ -1,4 +1,34 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]  # 메인 브랜치 이름이 'master'라면 'master'로 수정하세요.
+  workflow_dispatch:     # 수동으로 배포를 실행할 수 있게 해줍니다.
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
+# 배포를 위한 작업(Job) 정의
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
